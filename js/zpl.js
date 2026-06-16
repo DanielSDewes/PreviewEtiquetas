@@ -178,8 +178,10 @@
   }
 
   function decodeData(raw, field) {
-    if (field && field.hex) return global.CP850.decodeFieldHex(raw, field.hexInd);
-    return raw;
+    if (field && field.hex) raw = global.CP850.decodeFieldHex(raw, field.hexInd);
+    // Alguns geradores usam `/N:` como marcador de nova linha em campos de texto.
+    // No preview, não renderizamos o literal; mantemos apenas um espaço em branco.
+    return raw.replace(/\/N:/gi, ' ');
   }
 
   // Detecta a linguagem (por enquanto só ZPL é renderizado).
