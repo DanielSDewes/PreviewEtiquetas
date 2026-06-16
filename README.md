@@ -37,7 +37,7 @@ apontando em qual linha do PRN está o problema.
 
 - **ZPL II** (Zebra, e impressoras Argox/Elgin operando em modo ZPL) — completo:
   `^FO/^FT`, fontes `^A`, `^GB`, `^BQ` (QR), códigos de barras `^BC/^B3/...`,
-  `^FH` com decodificação **CP850** (acentos), `^PW`, `^LL`, `^LH`, `^LS`, `^CF`, `^BY`.
+  `^FH` com decodificação **CP850** (acentos), `^PW`, `^LL`, `^LH`, `^LS`, `^LT`, `^CF`, `^BY`.
 
 > **Argox (PPLA/PPLB)** e **Elgin** em sua linguagem nativa ainda **não** são
 > interpretados. Para adicioná-los com fidelidade, basta um PRN de exemplo de cada
@@ -62,7 +62,13 @@ Para suportar outra linguagem, crie um parser que produza a mesma estrutura de
 
 ## Observações de precisão
 
-- Larguras de texto usam a fonte do navegador como aproximação da fonte 0 do ZPL —
-  muito próximas, mas não idênticas ao firmware da impressora.
-- QR/códigos de barras: a **posição** é exata; o **tamanho** é estimado a partir do
-  volume de dados e da magnificação/`^BY`. Por isso são marcados como `estimado`.
+A geometria foi **calibrada contra o renderizador de referência Labelary** e
+conferida com uma impressão real:
+
+- **Largura de texto**: a fonte 0 escalável do ZPL tem avanço médio ≈ `0,5 × w`
+  (o parâmetro de largura do `^A`). O texto é desenhado comprimido para coincidir
+  com essa largura (o Arial puro do navegador é ~20-30% mais largo e causava colisões).
+- **`^LT` (Label Top)**: aplicado como deslocamento vertical de todos os campos.
+- **QR (`^BQ`)**: a **posição** é exata — o `^FT` referencia ~3 módulos abaixo da
+  base do símbolo (zona de silêncio). O **tamanho** é estimado pelo volume de dados
+  e magnificação, por isso QR/códigos de barras são marcados como `estimado`.

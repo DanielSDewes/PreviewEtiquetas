@@ -1,5 +1,6 @@
 # Tooling local / preview
 .claude/
+_calib/
 
 # Arquivos temporários gerados pelo .bat ao imprimir
 *.prn

@@ -53,7 +53,7 @@
 
   /* ---- 2) Construção dos elementos ------------------------------------- */
   function build(tokens) {
-    var config = { pw: null, ll: null, lh: { x: 0, y: 0 }, ls: 0, ci: 0,
+    var config = { pw: null, ll: null, lh: { x: 0, y: 0 }, ls: 0, lt: 0, ci: 0,
                    by: { w: 2, r: 3, h: 10 }, cf: { f: '0', h: 30, w: 30 } };
     var elements = [];
     var unknown = [];
@@ -64,7 +64,7 @@
       cur = {
         anchor: anchor,
         x: config.lh.x + config.ls + toInt(p[0]),
-        y: config.lh.y + toInt(p[1]),
+        y: config.lh.y + config.lt + toInt(p[1]),
         srcLine: tok.srcLine,
         font: { f: config.cf.f, h: config.cf.h, w: config.cf.w, o: 'N' },
         hex: false, hexInd: '\\',
@@ -91,6 +91,7 @@
         case 'LL': config.ll = toInt(tok.params); break;
         case 'LH': config.lh = { x: toInt(p[0]), y: toInt(p[1]) }; break;
         case 'LS': config.ls = toInt(tok.params); break;
+        case 'LT': config.lt = toInt(tok.params); break;   // Label Top: desloca tudo em Y
         case 'CI': config.ci = toInt(tok.params); break;
         case 'BY':
           config.by = { w: toInt(p[0], 2), r: parseFloat(p[1]) || 3, h: toInt(p[2], 10) };
@@ -164,7 +165,7 @@
         // comandos de configuração sem efeito visual — ignorados de propósito
         case 'MM': case 'MN': case 'MT': case 'PO': case 'PM': case 'JM':
         case 'PR': case 'SD': case 'JU': case 'LR': case 'TA': case 'JS':
-        case 'LT': case 'PQ': case 'FR': case 'FW': case 'CC': case 'CT':
+        case 'PQ': case 'FR': case 'FW': case 'CC': case 'CT':
           break;
 
         default:

@@ -9,13 +9,23 @@
   var measureCanvas = document.createElement('canvas');
   var mctx = measureCanvas.getContext('2d');
 
+  // Largura calibrada contra a fonte 0 da Zebra usando o renderizador de
+  // referência (Labelary): o avanço médio por caractere da fonte escalável 0
+  // ≈ 0,5 × largura (w) do ^A. O Arial do navegador é ~20-30% mais largo, o que
+  // fazia o texto "vazar" e colidir (ex.: nome da empresa cobrindo o telefone).
+  var ZEBRA0_ADVANCE = 0.5;
   function measureText(text, h, w) {
+    var t = text || '';
+    var cw = (w || h) || 1;
+    var width = t.length * ZEBRA0_ADVANCE * cw;
     mctx.font = h + 'px Arial, Helvetica, sans-serif';
-    var m = mctx.measureText(text || '');
-    var scaleX = (w && h) ? (w / h) : 1;
-    var ascent = m.actualBoundingBoxAscent || h * 0.75;
+    var m = mctx.measureText(t);
+    var arial = m.width || width;
+    var ascent = m.actualBoundingBoxAscent || h * 0.78;
     var descent = m.actualBoundingBoxDescent || h * 0.22;
-    return { width: m.width * scaleX, ascent: ascent, descent: descent, scaleX: scaleX };
+    // fator para desenhar o texto comprimido de modo a coincidir com a largura real
+    var drawScaleX = arial > 0 ? width / arial : 1;
+    return { width: width, ascent: ascent, descent: descent, drawScaleX: drawScaleX };
   }
 
   // Estimativa do nº de módulos de um QR conforme o tamanho dos dados.
@@ -47,11 +57,15 @@
       return;
     }
     if (el.kind === 'qr') {
+      var mag = el.qr.mag || 3;
       var modules = estimateQrModules(el.data);
-      var size = modules * (el.qr.mag || 3);
+      var size = modules * mag;
       el.size = size;
-      if (el.anchor === 'FT') { // âncora = canto inferior-esquerdo
-        el.bbox = { x0: el.x, y0: el.y - size, x1: el.x + size, y1: el.y };
+      if (el.anchor === 'FT') {
+        // No ^BQ, o ^FT referencia ~3 módulos ABAIXO da base do símbolo
+        // (zona de silêncio) — calibrado contra o Labelary e a impressão real.
+        var bottom = el.y - 3 * mag;
+        el.bbox = { x0: el.x, y0: bottom - size, x1: el.x + size, y1: bottom };
       } else {                  // FO = canto superior-esquerdo
         el.bbox = { x0: el.x, y0: el.y, x1: el.x + size, y1: el.y + size };
       }
@@ -207,7 +221,7 @@
       ctx.textBaseline = 'alphabetic';
       var baseX = t.tx(el.x);
       var baseY = el.anchor === 'FT' ? t.ty(el.y) : t.ty(el.y) + (el.measured.ascent * t.scale);
-      var sx = el.measured.scaleX || 1;
+      var sx = el.measured.drawScaleX || 1;
       ctx.save();
       ctx.translate(baseX, baseY);
       ctx.scale(sx, 1);
