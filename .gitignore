@@ -1,0 +1,10 @@
+# Tooling local / preview
+.claude/
+
+# Arquivos temporários gerados pelo .bat ao imprimir
+*.prn
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store

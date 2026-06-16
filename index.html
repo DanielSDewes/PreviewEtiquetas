@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pré-visualização de Etiquetas PRN</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🏷️</span>
+      <div>
+        <h1>Pré-visualização de Etiquetas</h1>
+        <p>Visualize o PRN e descubra se a etiqueta ultrapassa as dimensões</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Controles -->
+    <aside class="panel controls">
+      <h2>Configuração</h2>
+
+      <label class="field">
+        <span>Impressora</span>
+        <select id="printer">
+          <option value="zebra">Zebra</option>
+          <option value="argox">Argox</option>
+          <option value="elgin">Elgin</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Resolução (DPI)</span>
+        <select id="dpi">
+          <option value="203">203 dpi (8 dots/mm)</option>
+          <option value="300">300 dpi (~11,8 dots/mm)</option>
+          <option value="600">600 dpi (~23,6 dots/mm)</option>
+        </select>
+      </label>
+
+      <div class="dims">
+        <label class="field">
+          <span>Largura</span>
+          <input id="width" type="text" inputmode="decimal" value="100">
+        </label>
+        <span class="x">×</span>
+        <label class="field">
+          <span>Altura</span>
+          <input id="height" type="text" inputmode="decimal" value="40">
+        </label>
+        <label class="field unit">
+          <span>Unidade</span>
+          <select id="unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Conteúdo do PRN (ou .bat/.cmd)</span>
+        <textarea id="prn" rows="12" spellcheck="false"
+          placeholder="Cole aqui o conteúdo do .prn ou do .bat gerado…"></textarea>
+      </label>
+
+      <div class="file-row">
+        <label class="filebtn">
+          📂 Abrir arquivo…
+          <input id="file" type="file" accept=".prn,.txt,.bat,.cmd,.zpl,.lbl">
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="btn-preview" class="primary">Pré-visualizar</button>
+        <button id="btn-example" class="ghost">Exemplo</button>
+        <button id="btn-clear" class="ghost">Limpar</button>
+      </div>
+    </aside>
+
+    <!-- Resultados -->
+    <section class="results">
+      <div id="summary" class="summary">Aguardando o PRN…</div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Pré-visualização</h2>
+          <div class="legend">
+            <span><i class="sw label"></i> etiqueta</span>
+            <span><i class="sw over"></i> fora dos limites</span>
+            <span><i class="sw out"></i> área externa</span>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="canvas"></canvas>
+        </div>
+        <div id="meta"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Problemas encontrados</h2>
+        <div id="issues"><div class="empty">Nenhuma análise ainda.</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Código do PRN <small>(linhas com erro destacadas)</small></h2>
+        <div id="source" class="source"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/cp850.js"></script>
+  <script src="js/prn-parser.js"></script>
+  <script src="js/zpl.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
